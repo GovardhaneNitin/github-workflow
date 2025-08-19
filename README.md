@@ -1,0 +1,99 @@
+# GitHub Quest: Pixel Odyssey
+
+A collaborative, turn-based pixel adventure game that advances **only through pull requests**. Each merged PR moves the Hero one step through a procedurally generated world rendered as ASCII art in the repository.
+
+Inspired by other GitHub-native games, but with fresh mechanics:
+
+## Core Concept
+- The world is a scrolling 2D map stored in `world/state.json`.
+- Each merged PR counts as **time passing** (a “tick”).
+- Contributors earn **Artifacts** by performing specific contribution actions (docs edit, test addition, refactor, feature stub, etc.). Artifacts influence events.
+- Random events (treasure, ambush, weather, portals) are rolled each tick using a seed derived from commit hash + day-of-year.
+- The hero has stats (HP, Luck, Speed, Insight) that evolve based on community behavior.
+- Boss gates appear every 25 steps; defeating a boss requires a community challenge (e.g., reach 5 contributors in 24h or add 3 tests).
+
+## How to Play
+1. Fork the repo.
+2. Run `npm install`.
+3. Choose a contribution type (see Achievement Table below).
+4. Make your change. Optionally run `npm run simulate` to preview the next tick.
+5. Open a pull request. The GitHub Action will:
+   - Validate formatting & schema
+   - Advance the world by 1 step if merged
+   - Post an updated map & event log as a comment
+
+## Artifacts & Achievements
+| Contribution Pattern | Artifact | Effect |
+|----------------------|----------|--------|
+| Adds/updates test (`__tests__/`) | Crystal of Insight | Boost event discovery chance |
+| Improves docs (`docs/` or README) | Quill of Clarity | +Luck for next 2 ticks |
+| Refactor (touches >2 src files w/o adding LOC) | Refactoring Orb | Reduces damage from traps |
+| Adds feature file in `src/abilities/` | Ability Rune | Unlocks new skill slots |
+| Fixes an issue linked via `Fixes #` | Patch Sigil | Small heal |
+| Adds performance tag `[perf]` in title | Wind Talisman | Chance for bonus step |
+
+## Map Rendering
+Rendered into `WORLD.md` using emoji + ASCII hybrid:
+```
+🏹 = Hero   🗝️ = Artifact   👾 = Enemy   💎 = Treasure   ⛰️ = Rock   ~ = Water
+```
+Viewport shows last 30 steps; older terrain archived in `world/history/`.
+
+## Event System (Deterministic Random)
+Seed = `SHA256( lastMergedCommit + tickNumber + dayOfYear )` -> PRNG -> rolls:
+- Encounter chance
+- Loot table
+- Weather modifier
+- Boss trigger
+
+## Tech Stack
+- Node.js (no external heavy deps)
+- JSON for state
+- GitHub Actions for automation
+## Scripts
+- `npm run tick` : advances one tick (used in CI)
+- `npm run simulate` : dry-run locally
+- `npm test` : validation & lightweight logic tests
+
+## Repository Structure
+```
+world/
+  state.json          # Current hero + map window + tick
+  history/            # Archived older segments
+src/
+  tick.js             # Core tick engine
+  worldGen.js         # Procedural terrain
+  events.js           # Event + loot logic
+  rng.js              # Seeded RNG util
+  render.js           # Renders WORLD.md
+__tests__/
+.github/workflows/game.yml
+WORLD.md
+```
+
+## Contributing Flow
+1. Your PR is merged.
+2. Action runs `npm ci && npm run tick`.
+3. `world/state.json` updates, `WORLD.md` re-generated.
+4. Commit pushed by Action.
+5. Action comments the event summary.
+
+If a Boss Gate triggers and community challenge unmet, hero waits (stalled). Consecutive stalls spawn side-quests (special tasks listed in Issues automatically). 
+
+## Side Quests (Auto-generated)
+- Coverage Quest: Add a new test file.
+- Lore Quest: Expand `docs/lore.md` with 50+ new chars.
+- Explorer Quest: Add new biome rule in `worldGen.js`.
+
+## Running Locally
+```
+npm install
+npm run simulate
+```
+Produces preview: next tile, potential event, hero stats delta.
+
+## License
+MIT
+
+---
+Make the journey collaborative. Every meaningful contribution literally moves the project forward.

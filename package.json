@@ -1,0 +1,13 @@
+{
+  "name": "github-quest-pixel-odyssey",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "tick": "node src/tick.js",
+    "simulate": "node src/tick.js",
+    "test": "node __tests__/basic.test.js"
+  },
+  "devDependencies": {}
+}

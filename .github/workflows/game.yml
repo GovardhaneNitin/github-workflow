@@ -1,0 +1,60 @@
+name: GitHub Quest Tick
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [closed]
+
+jobs:
+  advance:
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gather changed paths
+        id: changes
+        run: |
+          echo "paths=$(git diff --name-only HEAD~1..HEAD | tr '\n' ' ' )" >> $GITHUB_OUTPUT
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install
+        run: npm ci || npm install
+      - name: Tick
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          CHANGED_PATHS: ${{ steps.changes.outputs.paths }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: npm run tick
+      - name: Commit state
+        run: |
+          git config user.name 'quest-bot'
+          git config user.email 'quest-bot@users.noreply.github.com'
+          git add WORLD.md world/state.json
+          if git diff --cached --quiet; then
+            echo 'No world changes.'
+            exit 0
+          fi
+          git commit -m "chore: advance world to tick" -m "[skip ci]"
+          git push
+      - name: Comment summary
+        if: github.event.pull_request.number
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const state = JSON.parse(fs.readFileSync('world/state.json','utf8'));
+            const last = state.log[state.log.length-1];
+            const body = `### World Advanced to Tick ${state.tick}\nTile: ${last.tile}\nEvent: ${last.event.type}\nBoosts: ${JSON.stringify(last.boosts)}\nHP: ${state.hero.hp}`;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });

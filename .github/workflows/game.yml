@@ -2,7 +2,7 @@ name: GitHub Quest Tick
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
     types: [closed]
 
@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
       - name: Install
         run: npm ci || npm install
       - name: Tick
@@ -36,7 +36,7 @@ jobs:
         run: |
           git config user.name 'quest-bot'
           git config user.email 'quest-bot@users.noreply.github.com'
-          git add WORLD.md world/state.json
+          git add WORLD.md world/state.json README.md
           if git diff --cached --quiet; then
             echo 'No world changes.'
             exit 0

@@ -24,10 +24,16 @@ function updateReadmeLiveSection(state) {
     line || "(start)",
     "```",
   ].join("\n");
-  const newReadme = readme.replace(
-    new RegExp(start + "[sS]*?" + end),
-    `${start}\n${snippet}\n${end}`
+  const pattern = new RegExp(
+    start.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + // escape
+      "[\\s\\S]*?" +
+      end.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
   );
+  if (!pattern.test(readme)) {
+    console.warn("Live world markers not matched for replacement");
+    return;
+  }
+  const newReadme = readme.replace(pattern, `${start}\n${snippet}\n${end}`);
   fs.writeFileSync(README_PATH, newReadme);
 }
 

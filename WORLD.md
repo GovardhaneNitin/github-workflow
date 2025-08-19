@@ -1,7 +1,7 @@
 # World
 
-Tick: 0
+Tick: 1
 HP: 30/30  Luck:1  Spd:1  Insight:1
-Biome: plains
+Biome:plains
 
-(advance the world by merging a PR)
+🏹

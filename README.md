@@ -17,6 +17,21 @@ Biome: ruins
 ```
 <!-- LIVE-WORLD:END -->
 
+## Live Preview (Interactive)
+
+You can view an auto-refreshing HTML version of the world in `live/index.html`.
+
+### Enable GitHub Pages
+1. Open the repository Settings → Pages.
+2. Source: deploy from branch `main`, folder `/root` (if allowed) OR use `/docs`.
+3. If using `/docs`, move the `live` folder contents into a new `docs/` folder (or duplicate).
+4. After Pages builds, visit: `https://<your-username>.github.io/<repo-name>/live/`.
+
+Current placeholder URL (adjust once Pages enabled):
+`https://<user>.github.io/github-workflow/live/`
+
+The page fetches `world/state.json` every 5s directly from the repo (works when served via Pages; local file browsing may block fetch due to CORS / file:// restrictions).
+
 ## Core Concept
 
 - The world is a scrolling 2D map stored in `world/state.json`.

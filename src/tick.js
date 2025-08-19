@@ -9,20 +9,25 @@ const README_PATH = path.join(__dirname, "..", "README.md");
 function updateReadmeLiveSection(state) {
   if (!fs.existsSync(README_PATH)) return;
   const readme = fs.readFileSync(README_PATH, "utf8");
-  const start = '<!-- LIVE-WORLD:START -->';
-  const end = '<!-- LIVE-WORLD:END -->';
+  const start = "<!-- LIVE-WORLD:START -->";
+  const end = "<!-- LIVE-WORLD:END -->";
   if (!readme.includes(start) || !readme.includes(end)) return;
   const heroPos = state.map.steps.length - 1;
-  const line = state.map.steps.map((t,i)=> i===heroPos ? '🏹' : t).join('');
+  const line = state.map.steps
+    .map((t, i) => (i === heroPos ? "🏹" : t))
+    .join("");
   const snippet = [
-    '```',
+    "```",
     `Tick: ${state.tick}`,
     `HP ${state.hero.hp}/${state.hero.maxHp} | Luck ${state.hero.luck} | Spd ${state.hero.speed} | Insight ${state.hero.insight}`,
     `Biome: ${state.map.biome}`,
-    line || '(start)',
-    '```'
-  ].join('\n');
-  const newReadme = readme.replace(new RegExp(start + '[\s\S]*?' + end), `${start}\n${snippet}\n${end}`);
+    line || "(start)",
+    "```",
+  ].join("\n");
+  const newReadme = readme.replace(
+    new RegExp(start + "[sS]*?" + end),
+    `${start}\n${snippet}\n${end}`
+  );
   fs.writeFileSync(README_PATH, newReadme);
 }
 

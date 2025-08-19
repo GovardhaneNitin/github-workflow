@@ -1,10 +1,10 @@
-const { tick } = require('../src/tick');
+const { tick } = require("../src/tick");
 
-console.log('Running simulation test...');
+console.log("Running simulation test...");
 try {
   tick();
-  console.log('Tick executed successfully');
+  console.log("Tick executed successfully");
 } catch (e) {
-  console.error('Tick failed', e);
+  console.error("Tick failed", e);
   process.exit(1);
 }

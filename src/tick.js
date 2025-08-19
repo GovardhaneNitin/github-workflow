@@ -32,7 +32,7 @@ function updateReadmeLiveSection(state) {
   }
   const newReadme = readme.replace(pattern, `${start}\n${snippet}\n${end}`);
   fs.writeFileSync(README_PATH, newReadme);
-  console.log('Updated README live snapshot');
+  console.log("Updated README live snapshot");
 }
 
 function loadState() {

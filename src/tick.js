@@ -24,17 +24,15 @@ function updateReadmeLiveSection(state) {
     line || "(start)",
     "```",
   ].join("\n");
-  const pattern = new RegExp(
-    start.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + // escape
-      "[\\s\\S]*?" +
-      end.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-  );
+  const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp(`${esc(start)}[\\s\\S]*?${esc(end)}`);
   if (!pattern.test(readme)) {
     console.warn("Live world markers not matched for replacement");
     return;
   }
   const newReadme = readme.replace(pattern, `${start}\n${snippet}\n${end}`);
   fs.writeFileSync(README_PATH, newReadme);
+  console.log('Updated README live snapshot');
 }
 
 function loadState() {

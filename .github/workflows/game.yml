@@ -5,11 +5,15 @@ on:
     branches: [main]
   pull_request:
     types: [closed]
+  workflow_dispatch:
 
 jobs:
   advance:
-    if: github.event.pull_request.merged == true || github.event_name == 'push'
+    if: github.event_name == 'push' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -17,8 +21,15 @@ jobs:
           fetch-depth: 0
       - name: Gather changed paths
         id: changes
+        shell: bash
         run: |
-          echo "paths=$(git diff --name-only HEAD~1..HEAD | tr '\n' ' ' )" >> $GITHUB_OUTPUT
+          set -e
+          if git rev-parse HEAD~1 >/dev/null 2>&1; then
+            DIFF=$(git diff --name-only HEAD~1..HEAD | tr '\n' ' ' )
+          else
+            DIFF=$(git ls-files | tr '\n' ' ' )
+          fi
+            echo "paths=${DIFF}" >> $GITHUB_OUTPUT
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -32,6 +43,10 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: npm run tick
+      - name: Snapshot diagnostics
+        run: |
+          echo '--- README Live Snapshot Section ---'
+          awk '/LIVE-WORLD:START/{flag=1} /LIVE-WORLD:END/{print;flag=0} flag' README.md || true
       - name: Commit state
         run: |
           git config user.name 'quest-bot'

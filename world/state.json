@@ -1,5 +1,5 @@
 {
-  "tick": 6,
+  "tick": 7,
   "hero": {
     "name": "Valora",
     "hp": 30,
@@ -16,6 +16,7 @@
       "🌲",
       "🧱",
       "📜",
+      "⚙️",
       "⚙️"
     ],
     "biome": "ruins"
@@ -95,6 +96,19 @@
       "boosts": {
         "hp": 0,
         "luck": 1,
+        "speed": 0,
+        "insight": 0
+      }
+    },
+    {
+      "tick": 7,
+      "tile": "⚙️",
+      "event": {
+        "type": "none"
+      },
+      "boosts": {
+        "hp": 0,
+        "luck": 0,
         "speed": 0,
         "insight": 0
       }

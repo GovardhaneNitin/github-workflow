@@ -1,46 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<title>GitHub Quest Live Preview</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<style>
-  body { font-family: system-ui, sans-serif; background:#0d1117; color:#e6edf3; margin:0; padding:1rem; }
-  h1 { font-size:1.25rem; margin:0 0 1rem; }
-  .panel { background:#161b22; border:1px solid #30363d; padding:1rem; border-radius:8px; max-width:640px; }
-  pre { background:#0d1117; padding:0.75rem 1rem; border:1px solid #30363d; border-radius:6px; overflow:auto; }
-  small { color:#8b949e; }
-  .stats { display:flex; flex-wrap:wrap; gap:.75rem; margin:.5rem 0 1rem; }
-  .badge { background:#238636; padding:.25rem .6rem; border-radius:999px; font-size:.75rem; }
-  footer { margin-top:2rem; font-size:.75rem; color:#6e7681; }
-</style>
-</head>
-<body>
-  <h1>GitHub Quest Live Preview</h1>
-  <div class="panel" id="app">
-    <div id="loading">Loading latest state...</div>
-  </div>
-  <footer>Auto-refreshed client-side (no server). Host via GitHub Pages for a public live map.</footer>
-<script>
-async function fetchState(){
-  try {
-    const res = await fetch('../world/state.json?_=' + Date.now());
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    return await res.json();
-  } catch(e) { console.error(e); return null; }
-}
-function render(state){
-  if(!state) return '<p>Failed to load state.json</p>';
-  const heroPos = state.map.steps.length -1;
-  const line = state.map.steps.map((t,i)=> i===heroPos ? '🏹' : t).join('');
-  return `\n<small>Tick ${state.tick}</small>\n<div class="stats">\n<span class="badge">HP ${state.hero.hp}/${state.hero.maxHp}</span>\n<span class="badge">Luck ${state.hero.luck}</span>\n<span class="badge">Spd ${state.hero.speed}</span>\n<span class="badge">Insight ${state.hero.insight}</span>\n<span class="badge">Biome ${state.map.biome}</span>\n</div>\n<pre>${line||'(start)'}</pre>\n<details><summary>Recent Log</summary><pre>${state.log.slice(-5).map(l=>`T${l.tick} ${l.tile} ${l.event.type}`).join('\n')}</pre></details>`;
-}
-async function loop(){
-  const state = await fetchState();
-  document.getElementById('app').innerHTML = render(state);
-}
-setInterval(loop, 5000);
-loop();
-</script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>GitHub Quest Live Preview</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        background: #0d1117;
+        color: #e6edf3;
+        margin: 0;
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin: 0 0 1rem;
+      }
+      .panel {
+        background: #161b22;
+        border: 1px solid #30363d;
+        padding: 1rem;
+        border-radius: 8px;
+        max-width: 640px;
+      }
+      pre {
+        background: #0d1117;
+        padding: 0.75rem 1rem;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        overflow: auto;
+      }
+      small {
+        color: #8b949e;
+      }
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin: 0.5rem 0 1rem;
+      }
+      .badge {
+        background: #238636;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+      }
+      footer {
+        margin-top: 2rem;
+        font-size: 0.75rem;
+        color: #6e7681;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>GitHub Quest Live Preview</h1>
+    <div class="panel" id="app">
+      <div id="loading">Loading latest state...</div>
+    </div>
+    <footer>
+      Auto-refreshed client-side (no server). Host via GitHub Pages for a public
+      live map.
+    </footer>
+    <script>
+      async function fetchState() {
+        try {
+          const res = await fetch("../world/state.json?_=" + Date.now());
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return await res.json();
+        } catch (e) {
+          console.error(e);
+          return null;
+        }
+      }
+      function render(state) {
+        if (!state) return "<p>Failed to load state.json</p>";
+        const heroPos = state.map.steps.length - 1;
+        const line = state.map.steps
+          .map((t, i) => (i === heroPos ? "🏹" : t))
+          .join("");
+        return `\n<small>Tick ${
+          state.tick
+        }</small>\n<div class="stats">\n<span class="badge">HP ${
+          state.hero.hp
+        }/${state.hero.maxHp}</span>\n<span class="badge">Luck ${
+          state.hero.luck
+        }</span>\n<span class="badge">Spd ${
+          state.hero.speed
+        }</span>\n<span class="badge">Insight ${
+          state.hero.insight
+        }</span>\n<span class="badge">Biome ${
+          state.map.biome
+        }</span>\n</div>\n<pre>${
+          line || "(start)"
+        }</pre>\n<details><summary>Recent Log</summary><pre>${state.log
+          .slice(-5)
+          .map((l) => `T${l.tick} ${l.tile} ${l.event.type}`)
+          .join("\n")}</pre></details>`;
+      }
+      async function loop() {
+        const state = await fetchState();
+        document.getElementById("app").innerHTML = render(state);
+      }
+      setInterval(loop, 5000);
+      loop();
+    </script>
+  </body>
 </html>
